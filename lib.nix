@@ -4,7 +4,16 @@ rec {
   isCaseInsensitiveFs = builtins.pathExists (
     (builtins.substring 0 44 (builtins.toFile "Aa" "")) + "aa"
   );
-  isX86 = builtins.substring 0 1 (builtins.toString (1.0e200 * 1.0e200 - 1.0e200 * 1.0e200)) == "-";
+
+  canRepresentNegativeNan = builtins.substring 0 1 negnan == "-";
+
+  # inf - inf is -nan on some systems, nan on others
+  infMinusInfIsNegativeNan =
+    builtins.substring 0 1 (builtins.toString (1.0e200 * 1.0e200 - 1.0e200 * 1.0e200)) == "-";
+
+  # whether a + b propagates a if both are nan
+  firstNanPropagates =
+    canRepresentNegativeNan && builtins.substring 0 1 (builtins.toString (negnan + posnan)) == "-";
 
   # only in impure mode, e.g. nix repl
   triggerCrash = builtins.storePath "/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
@@ -15,7 +24,7 @@ rec {
   # A rough estimation of the current system
   estimatedCurrentSystem =
     let
-      sys = if isX86 then "x86_64" else "aarch64";
+      sys = if infMinusInfIsNegativeNan then "x86_64" else "aarch64";
       os = if isCaseInsensitiveFs then "darwin" else "linux";
     in
     "${sys}-${os}";
@@ -25,6 +34,4 @@ rec {
   posinf = evalToml "inf";
   neginf = evalToml "-inf";
   subnorm = evalToml "1.0e-308";
-
-  firstNanPropagates = builtins.substring 0 1 (builtins.toString (negnan + posnan)) == "-";
 }

@@ -33,5 +33,7 @@ rec {
   negnan = evalToml "-nan";
   posinf = evalToml "inf";
   neginf = evalToml "-inf";
-  subnorm = evalToml "1.0e-308";
+
+  # Crashes on aarch64-darwin, works on x86_64-linux
+  subnorm = evalToml "1e-308";
 }

@@ -9,7 +9,7 @@ Example:
 
 ```
 # In pure eval mode
-$ nix eval github:oddlama/nix-fingerprint#lib.estimatedCurrentSystems
+$ nix eval github:oddlama/nix-fingerprint#estimatedCurrentSystems
 [ "x86_64-linux" ]
 ```
 

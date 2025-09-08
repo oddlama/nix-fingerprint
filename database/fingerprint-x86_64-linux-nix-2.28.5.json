@@ -1,0 +1,12 @@
+{
+  "fingerprint": {
+    "canRepresentNegativeNan": true,
+    "firstNanPropagates": true,
+    "infMinusInfIsNegativeNan": true,
+    "isCaseInsensitiveFs": false
+  },
+  "meta": {
+    "nixVersion": "2.28.5",
+    "currentSystem": "x86_64-linux"
+  }
+}
